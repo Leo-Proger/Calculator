@@ -2,28 +2,28 @@ import java.util.ArrayList;
 import java.util.Arrays;
 
 public class Calculator {
-    private String[] exp;
+    private String[] expression;
 
-    public double calculate(String expression) {
-        exp = splitExpression(expression);
+    public double calculate(String exp) {
+        expression = splitExpression(exp);
 
-        System.out.println(Arrays.toString(exp));
+        System.out.println(Arrays.toString(this.expression));
 
-        return Double.parseDouble(calculateInParentheses());
+        return Double.parseDouble(calculateUsualOperation(expression));
     }
 
     /* Преобразовать выражение в массив */
-    private String[] splitExpression(String expression) {
+    private String[] splitExpression(String exp) {
         StringBuilder result = new StringBuilder();
-        expression = expression.replaceAll(" ", "");
+        exp = exp.replaceAll(" ", "");
 
-        for (int i = 0; i < expression.length(); i++) {
-            if (expression.charAt(i) == '+' || expression.charAt(i) == '-' || expression.charAt(i) == '*' || expression.charAt(i) == '/') {
+        for (int i = 0; i < exp.length(); i++) {
+            if (exp.charAt(i) == '+' || exp.charAt(i) == '-' || exp.charAt(i) == '*' || exp.charAt(i) == '/') {
                 result.append(" ");
-                result.append(expression.charAt(i));
+                result.append(exp.charAt(i));
                 result.append(" ");
             } else {
-                result.append(expression.charAt(i));
+                result.append(exp.charAt(i));
             }
         }
         return result.toString().split(" ");
@@ -40,8 +40,8 @@ public class Calculator {
         };
     }
 
-    /* Вычисление операций в скобках */
-    private String calculateInParentheses() {
+    /* Вычисление выражения в скобках */
+    private String calculateInParentheses(String[] exp) {
         boolean flag;
         ArrayList<String> result = new ArrayList<>();
 
@@ -61,26 +61,26 @@ public class Calculator {
     }
 
     /* Вычисляем операции умножения/деления и сложения/вычитания */
-    private String calculateUsualOperation(String[] simpleExp) {
+    private String calculateUsualOperation(String[] exp) {
         ArrayList<String> result = new ArrayList<>();
         int skipIndex = -1;
 
         // Вычисляем операции умножения и деления
-        for (int i = 0, j = 0; i < simpleExp.length; i++) {
+        for (int i = 0, j = 0; i < exp.length; i++) {
             if (i == skipIndex) {
                 continue;
-            } else if (simpleExp[i].equals("*")) {
+            } else if (exp[i].equals("*")) {
                 result.set(
-                        j - 1, getResult(result.get(j - 1), simpleExp[i + 1], "*")
+                        j - 1, getResult(result.get(j - 1), exp[i + 1], "*")
                 );
                 skipIndex = i + 1;
-            } else if (simpleExp[i].equals("/")) {
+            } else if (exp[i].equals("/")) {
                 result.set(
-                        j - 1, getResult(result.get(j - 1), simpleExp[i + 1], "/")
+                        j - 1, getResult(result.get(j - 1), exp[i + 1], "/")
                 );
                 skipIndex = i + 1;
             } else {
-                result.add(simpleExp[i]);
+                result.add(exp[i]);
                 j++;
             }
 
