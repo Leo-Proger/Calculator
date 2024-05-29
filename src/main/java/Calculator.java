@@ -1,12 +1,10 @@
 import java.util.ArrayList;
-import java.util.Arrays;
 
 public class Calculator {
-    private String[] expression;
     private int skipCount = 0;
 
     public double calculate(String exp) throws ArithmeticException {
-        expression = splitExpression(exp);
+        String[] expression = splitExpression(exp);
         double answer = Double.parseDouble(calculateInParentheses(expression, 0));
 
         if (answer == Double.NEGATIVE_INFINITY || answer == Double.POSITIVE_INFINITY) {
