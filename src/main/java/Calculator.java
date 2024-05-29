@@ -93,7 +93,6 @@ public class Calculator {
                 result.add(exp[i]);
                 j++;
             }
-
         }
 
         // Вычисляем операции сложения и вычитания
@@ -114,7 +113,6 @@ public class Calculator {
                 i--;
             }
         }
-
         return result.getFirst();
     }
 }
