@@ -3,13 +3,16 @@ import java.util.Arrays;
 
 public class Calculator {
     private String[] expression;
+    private int skipCount = 0;
 
-    public double calculate(String exp) {
+    public double calculate(String exp) throws ArithmeticException {
         expression = splitExpression(exp);
+        double answer = Double.parseDouble(calculateInParentheses(expression, 0));
 
-        System.out.println(Arrays.toString(this.expression));
-
-        return Double.parseDouble(calculateUsualOperation(expression));
+        if (answer == Double.NEGATIVE_INFINITY || answer == Double.POSITIVE_INFINITY) {
+            throw new ArithmeticException("Division by zero");
+        }
+        return Double.parseDouble(calculateInParentheses(expression, 0));
     }
 
     /* Преобразовать выражение в массив */
@@ -22,6 +25,12 @@ public class Calculator {
                 result.append(" ");
                 result.append(exp.charAt(i));
                 result.append(" ");
+            } else if (exp.charAt(i) == '(') {
+                result.append(exp.charAt(i));
+                result.append(" ");
+            } else if (exp.charAt(i) == ')') {
+                result.append(" ");
+                result.append(exp.charAt(i));
             } else {
                 result.append(exp.charAt(i));
             }
@@ -41,23 +50,26 @@ public class Calculator {
     }
 
     /* Вычисление выражения в скобках */
-    private String calculateInParentheses(String[] exp) {
-        boolean flag;
+    private String calculateInParentheses(String[] exp, int countIndex) {
         ArrayList<String> result = new ArrayList<>();
 
-        int openParentheses = 0;
-        int closeParentheses = -2;
-
-        for (int i = 0; i < exp.length; i++) {
-            if (result.get(i).equals("(")) {
-                openParentheses++;
-                flag = true;
-            } else if (result.get(i).equals(")")) {
-                closeParentheses++;
+        for (int i = countIndex; i < exp.length; i++) {
+            if (exp[i].equals("(") && skipCount != 0) {
+                skipCount++;
+            } else if (exp[i].equals("(")) {
+                result.add(calculateInParentheses(exp, i + 1));
+                skipCount++;
+            } else if (exp[i].equals(")") && skipCount != 0) {
+                skipCount--;
+            } else if (exp[i].equals(")")) {
+                return calculateUsualOperation(result.toArray(new String[0]));
+            } else if (skipCount != 0) {
+                continue;
+            } else {
+                result.add(exp[i]);
             }
         }
-
-        return "";
+        return calculateUsualOperation(result.toArray(new String[0]));
     }
 
     /* Вычисляем операции умножения/деления и сложения/вычитания */
